@@ -4,7 +4,10 @@ from collections import deque
 from operator import mul, length_hint
 from random import choice, sample, randrange
 from math import modf
+
 __name__ = "itertools_recipes"
+__doc__ = "Itertools recipes copied & edited from the python"\
+    " documentation, plus several additional custom functions."
 
 def take(n, iterable):
     "Return first n items of the iterable as a list"
@@ -409,163 +412,6 @@ itertools__all = ['accumulate', 'chain', 'choice', 'combinations', 'combinations
 
 __all__ = itertools__all +['take', 'prepend', 'tabulate', 'tail', 'consume', 'nth', 'all_equal', 'quantify', 'padnone', 'ncycles', 'dotproduct', 'flatten', 'repeatfunc', 'pairwise', 'grouper', 'roundrobin', 'partition', 'powerset', 'unique_everseen', 'unique_justseen', 'iter_except', 'first_true', 'random_product', 'random_permutation', 'random_combination', 'random_combination_with_replacement', 'nth_combination'
 ] + extended
-
-
-'''
-NAME
-    itertools - Functional tools for creating and using iterators.
-
-DESCRIPTION
-    Infinite iterators:
-    count(start=0, step=1) --> start, start+step, start+2*step, ...
-    cycle(p) --> p0, p1, ... plast, p0, p1, ...
-    repeat(elem [,n]) --> elem, elem, elem, ... endlessly or up to n times
-
-    Iterators terminating on the shortest input sequence:
-    accumulate(p[, func]) --> p0, p0+p1, p0+p1+p2
-    chain(p, q, ...) --> p0, p1, ... plast, q0, q1, ...
-    chain.from_iterable([p, q, ...]) --> p0, p1, ... plast, q0, q1, ...
-    compress(data, selectors) --> (d[0] if s[0]), (d[1] if s[1]), ...
-    dropwhile(pred, seq) --> seq[n], seq[n+1], starting when pred fails
-    groupby(iterable[, keyfunc]) --> sub-iterators grouped by value of keyfunc(v)
-    filterfalse(pred, seq) --> elements of seq where pred(elem) is False
-    islice(seq, [start,] stop [, step]) --> elements from
-           seq[start:stop:step]
-    starmap(fun, seq) --> fun(*seq[0]), fun(*seq[1]), ...
-    tee(it, n=2) --> (it1, it2 , ... itn) splits one iterator into n
-    takewhile(pred, seq) --> seq[0], seq[1], until pred fails
-    zip_longest(p, q, ...) --> (p[0], q[0]), (p[1], q[1]), ...
-
-    Combinatoric generators:
-    product(p, q, ... [repeat=1]) --> cartesian product
-    permutations(p[, r])
-    combinations(p, r)
-    combinations_with_replacement(p, r)
-
-CLASSES
-    builtins.object
-        accumulate        chain        combinations>        combinations_with_replacement        compress        count        cycle        dropwhile        filterfalse        groupby        islice        permutations        product        repeat        starmap        takewhile        zip_longest
-    class accumulate  |  accumulate(iterable, func=None, *, initial=None)
-     |  Return series of accumulated sums (or other binary function results).
-     |  Methods defined here:
-     |  __getattribute__(self, name, /):    Return getattr(self, name).  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     
-    class chain  |  chain(*iterables) --> chain object
-     |  Return a chain object whose .__next__() method returns elements from the
-     |  first iterable until it is exhausted, then elements from the next
-     |  iterable, until all of the iterables are exhausted.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     |  ----------------------------------------------------------------------
-     |  Class methods defined here:
-     |  __class_getitem__(...) from builtins.type
-     |      See PEP 585
-     |  from_iterable(iterable, /) from builtins.type
-     |      Alternative chain() constructor taking a single iterable argument that evaluates lazily.
-     
-    class combinations  |  combinations(iterable, r)
-     |  Return successive r-length combinations of elements in the iterable.
-     |  combinations(range(4), 3) --> (0,1,2), (0,1,3), (0,2,3), (1,2,3)
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__  |  __sizeof__
-     
-    class combinations_with_replacemen
-nt  |  combinations_with_replacement(iterable, r)
-     |  Return successive r-length combinations of elements in the iterable allowing individual elements to have successive repeats.
-     |  combinations_with_replacement('ABC', 2) --> AA AB AC BB BC CC"
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__  |  __sizeof__
-     
-    class compress  |  compress(data, selectors)
-     |  Return data elements corresponding to true selector elements.
-     |  Forms a shorter iterator from selected data elements using the selectors to
-     |  choose the data elements.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__
-     
-    class count  |  count(start=0, step=1)
-     |  Return a count object whose .__next__() method returns consecutive values.
-     |  Equivalent to:
-     |      def count(firstval=0, step=1):
-     |          x = firstval
-     |          while 1:
-     |              yield x
-     |              x += step
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __repr__
-     
-    class cycle  |  cycle(iterable, /)
-     |  Return elements from the iterable until it is exhausted. Then repeat the sequence indefinitely.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     
-    class dropwhile  |  dropwhile(predicate, iterable, /)
-     |  Drop items from the iterable while predicate(item) is true.
-     |  Afterwards, return every element until the iterable is exhausted.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     
-    class filterfalse  |  filterfalse(function, iterable, /)
-     |  Return those items of iterable for which function(item) is false.
-     |  If function is None, return the items that are false.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__
-     
-    class groupby  |  groupby(iterable, key=None)
-     |  make an iterator that returns consecutive keys and groups from the iterable
-     |  iterable
-     |    Elements to divide into groups according to the key function.
-     |  key
-     |    A function for computing the group category for each element.
-     |    If the key function is not specified or is None, the element itself
-     |    is used for grouping.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     
-    class islice  |  islice(iterable, stop) --> islice object
-     |  islice(iterable, start, stop[, step]) --> islice object
-     |  Return an iterator whose next() method returns selected values from an
-     |  iterable.  If start is specified, will skip all preceding elements;
-     |  otherwise, start defaults to zero.  Step defaults to one.  If
-     |  specified as another value, step determines how many values are
-     |  skipped between successive calls.  Works like a slice() on a list
-     |  but returns an iterator.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     
-    class permutations  |  permutations(iterable, r=None)
-     |  Return successive r-length permutations of elements in the iterable.
-     |  permutations(range(3), 2) --> (0,1), (0,2), (1,0), (1,2), (2,0), (2,1)
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__  |  __sizeof__
-     
-    class product  |  product(*iterables, repeat=1) --> product object
-     |  Cartesian product of input iterables.  Equivalent to nested for-loops.
-     |  For example, product(A, B) returns the same as:  ((x,y) for x in A for y in B).
-     |  The leftmost iterators are in the outermost for-loop, so the output tuples
-     |  cycle in a manner similar to an odometer (with the rightmost element changing
-     |  on every iteration).
-     |  To compute the product of an iterable with itself, specify the number
-     |  of repetitions with the optional repeat keyword argument. For example,
-     |  product(A, repeat=4) means the same as product(A, A, A, A).
-     |  product('ab', range(3)) --> ('a',0) ('a',1) ('a',2) ('b',0) ('b',1) ('b',2)
-     |  product((0,1), (0,1), (0,1)) --> (0,0,0) (0,0,1) (0,1,0) (0,1,1) (1,0,0) ...
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__  |  __sizeof__
-     
-    class repeat  |  repeat(object [,times]) -> create an iterator which returns the object
-     |  for the specified number of times.  If not specified, returns the object
-     |  endlessly.
-     |  Methods defined here:  |  __getattribute__  |  __iter__
-     |  __length_hint__(...):          Private method returning an estimate of len(list(it)).  |  __next__  |  __reduce__  |  __repr__
-     
-    class starmap  |  starmap(function, iterable, /): Return an iterator whose values are returned from the function evaluated with an argument tuple taken from the given sequence.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__
-     
-    class takewhile  |  takewhile(predicate, iterable, /)
-     |  Return successive entries from an iterable as long as the predicate evaluates to true for each entry.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-          
-    class zip_longest  |  zip_longest(iter1 [,iter2 [...]], [fillvalue=None]) --> zip_longest object
-     |  Return a zip_longest object whose .__next__() method returns a tuple where
-     |  the i-th element comes from the i-th iterable argument.  The .__next__()
-     |  method continues until the longest iterable in the argument sequence
-     |  is exhausted and then it raises StopIteration.  When the shorter iterables
-     |  are exhausted, the fillvalue is substituted in their place.  The fillvalue
-     |  defaults to None or can be specified by a keyword argument.
-     |  Methods defined here:  |  __getattribute__  |  __iter__  |  __next__  |  __reduce__  |  __setstate__
-     
-FUNCTIONS
-    tee(iterable, n=2, /)        Returns a tuple of n independent iterators.
-'''
 
 
 
