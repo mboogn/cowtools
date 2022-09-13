@@ -1,5 +1,5 @@
 
-from math import trunc, ceil, floor, modf
+from math import trunc, ceil, floor
 from os import urandom, getrandom, GRND_RANDOM
 from random import SystemRandom, RECIP_BPF
 from sys import byteorder
@@ -27,13 +27,14 @@ def zdiround(v, nd=None, zdir=0, rel_zero=True):
 class Syrd(SystemRandom):
     """
     Methods based on random.Random but accessing os.urandom directly.  Most methods have been 
-    optimized for speed and/or randomness at unknown (probably negligable) cost.  Randomness can 
+    optimized for speed and/or randomness at unknown (probably negligible) cost.  Randomness can 
     be theoretically increased at a significant (and (seemigly) random; sometimes it’s unnoticeable) 
     cost to speed via Syrd.set_urandom_flags.
+    Using these methods for cryptography is probably not a good idea.
     """
     def set_urandom_flags(self, newflags=GRND_RANDOM):
         "Called without input, sets flags to os.GRND_RANDOM, trading randomness quality for speed. "\
-        "Called with newflags=0 ( Syrd().set_urandom_flags(0) ), resets to default behavior."
+        "Called with newflags=0 ( Syrd().set_urandom_flags(0) ) resets to default behavior."
         self.random.__func__.__defaults__ = (newflags,)
         self.randbytes.__func__.__defaults__ = (False, newflags,)
     
@@ -88,10 +89,10 @@ class Syrd(SystemRandom):
     def randrangeseq(self, start, stop=None, step=1, *, length=1, key=iter, nd=None):
         "Returns a function: rdrgsq(length=length, key=key, nd=nd) which returns an iterable of "\
         "type ‘key’ containing random numbers from: \n"\
-        "  {n ∈ N | start<=n<⁽¹⁾ stop && n←floor_round(n, nd)⁽¹⁾ && n%floor_round(step, nd) ≈≈ 0} \n"\
-        "    ⁽¹⁾†:  If nd is None, n are returned with no rounding. \n"\
+        "  {n ∈ N | start<=n<¹ stop && n←floor_round(n, nd)¹ && n%floor_round(step, nd) ≈≈ 0} \n"\
+        "    ¹†:  If nd is None, n are returned with no rounding. \n"\
         "            If nd==0, n are returned as ints (to accommodate python indexing). \n"\
-        "            Otherwise, n are returned floored to the ndᵗʰ digit."   
+        "            Otherwise, n are returned floored to the nd-th digit."   
         rdrd = self.random        
         if stop is None:
             if step == 1:
@@ -112,21 +113,6 @@ class Syrd(SystemRandom):
             if key: return key(flrrf(nd) for _ in range(length))
             return (flrrf(nd) for _ in range(length))
         return rdrgsq
-    '''
-    def get_randbytes_rangeseq(self, start, stop=0, nsteps=256, *, \
-    length=1, subkey=int, key=None, nd=0):
-        start, stop = not stop and (stop, start) or (start, stop)
-        span = stop - start
-        nx = 10**nd
-        step = int((256 / nsteps)*nx)
-        stf = lambda b: round(span * ((b*nx) // step))/nx  + start, nd)
-        def rdbtsq(length=length, subke=subkey, key=key):
-            if key:
-                if subkey: return key((subkey(rf(n)) for _ in range(length)))
-                return key((rf(n) for _ in range(length)))
-            if subkey: return (subkey(rf(n)) for _ in range(length))
-            return (rf(n) for _ in range(length))
-        return rdbtsq;'''
          
         
 
@@ -147,15 +133,6 @@ def srd(m, nd=None, unsigned=False, zdir=0, rel_zero=True):
     return zdiround(r, nd, zdir=zdir, rel_zero=rel_zero)
 
 
-#improbblsequstr = (lambda *x: lambda*y: (lambda*z: ''.join(chr(int(i)+161) for i in sorted(x+y+z, key=lambda a: Srdrd()))))(*Srdbt(6))(*Srdbt(6))(*Srdbt(6))
-
-
-
 __all__ = ['tround', 'ceiround', 'floround', 'zdiround', 'Syrd', 'SRNG', 'Srdrd', 'Srdrg', 'Srdbt', 'Srdsq', 'Srgsq', 'Srbsq', 'srd', 'getrandom'
 ]
 
-#flo = srd(12, 7)
-#floma, floex = frexp(flo)
-#florem, floint = modf(flo)
-
-#print(flo, (floma, floex), (florem, floint))
