@@ -26,7 +26,8 @@ __all__ = ['tuprepl', 'zipdictitems',
 'get_getattr', 'get_getattrs', 'get_getattr_dflt', 'get_getattrs_dflt', 
 'get_coco', 'get_code_co_attrs', 
 'getemall', 'trycallem', 
-'make_code', 'copy_code'
+'make_code', 'copy_code',
+'memprop', 'dmemprop'
 ]
 
 
@@ -259,4 +260,48 @@ def make_code(co_argcount, co_posonlyargcount, co_kwonlyargcount, co_nlocals, co
 def copy_code(code: CodeType, *, co_argcount=..., co_posonlyargcount=..., co_kwonlyargcount=..., co_nlocals=..., co_stacksize=..., co_flags=..., co_code=..., co_consts=..., co_names=..., co_varnames=..., co_filename=..., co_name=..., co_firstlineno=..., coln_otab=..., co_freevars=..., co_cellvars=..., **kwg):
     "Copies a code object with the given replacements."
     return code.replace(**dict(filter(g_binary2unary(lambda k, v: k in code_co_varnames and v is not ...), locals())))
+
+def memprop(getter, attrname, propname=None, as_property=True):
+    "Returns a get-as-needed attrgetter; performs setattr(self, attrname, getter(self)) only once, and "\
+    "not until called for.  To create setter/deleters for generated properties, @propname.setter works fine.\n"\
+    "class Ball:\n"
+    "    __slots__ = '_mass', '_density', '_volume'\n\n"\
+    "    mass = property(lambda self: self._mass)\n"\
+    "    density = property(lambda self: self._density)\n"\
+    "    def get_volume(self):\n"\
+    "        return self._mass * self._density\n"\
+    "    volume = memprop(get_volume, 'volume', '_volume')\n"\
+    "    @volume.setter\n"\
+    "    def volume(self, new_volume):\n"\
+    "        new_density = self.mass / new_volume\n"\
+    "        self._volume = new_volume\n"\
+    "        self._density = new_density\n"
+    
+    def mprp(self):
+        try: return getattr(self, attrname)
+        except AttributeError:
+            self.__setattr__(attrname, getter(self))
+            return getattr(self, attrname)
+    propname = propname or getter.__name__
+    mpco = mprp.__code__
+    mprp.__code__ = mpco.replace(co_name=propname)
+    mprp.__name__ = propname
+    if as_property: return property(mprp)
+    return mprp
+
+def dmemprop(attrname, propname=None, as_property=True):
+    "Decorator version of memprop.\n"\
+    "class Ball:\n"
+    "    __slots__ = '_mass', '_density', '_volume'\n\n"\
+    "    mass = property(lambda self: self._mass)\n"\
+    "    density = property(lambda self: self._density)\n"\
+    "    @dmemprop('_volume', 'volume') #since the getter’s name == propname, that parameter can be left blank"
+    "    def volume(self):\n"\
+    "        return self._mass * self._density\n"\
+    "    @volume.setter\n"\
+    "    def volume(self, new_volume):\n"\
+    "        new_density = self.mass / new_volume\n"\
+    "        self._volume = new_volume\n"\
+    "        self._density = new_density\n"
+    return lambda getter: memprop(getter, attrname=attrname, propname=propname, as_property=as_property)
 
