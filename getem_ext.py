@@ -9,7 +9,7 @@ from itertools_recipes import padnone, nfold_genr
 from collections.abc import Iterable, Mapping, Callable
 from types import FunctionType
 from dis import COMPILER_FLAG_NAMES
-from addedmanually.StringStuff import joinst
+from StringStuff import joinst
 
 __name__ = "getem_ext"
 __doc__ = "Additional functions for getem.  Useful for disecting and manipulating FunctionType objects."
